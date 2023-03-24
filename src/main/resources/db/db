@@ -4,16 +4,16 @@ CREATE SCHEMA `equipment_linkage` DEFAULT CHARACTER SET utf8mb4;
 
 # 1. 设备联动规则表
 CREATE TABLE `iot_linkage_strategy` (
-  `id` int NOT NULL AUTO_INCREMENT COMMENT '主键ID',
+  `sid` int NOT NULL AUTO_INCREMENT COMMENT '主键ID',
   `name` varchar(255) NOT NULL COMMENT '设备联动策略规则名称',
-  `type` tinyint(1) NOT NULL DEFAULT '0' COMMENT '是否显示（0:设备联动, 1:场景联动）',
-  `active` tinyint(1) NOT NULL DEFAULT '0' COMMENT '是否（0:设备联动, 1:场景联动）',
-  `start` int(11) NOT NULL COMMENT '有效期开始时间(单位秒)',
-  `end` int(11) NOT NULL COMMENT '有效期结束时间(单位秒)',
-  `create` int(11) NOT NULL COMMENT '创建时间(单位秒)',
-  `update` int(11) NOT NULL COMMENT '更新时间(单位秒)',
-  `describe` text NULL COMMENT '内容',
-  PRIMARY KEY (`id`)
+  `type` tinyint(1) NOT NULL DEFAULT '0' COMMENT '联动类型（0:设备联动, 1:场景联动）',
+  `active` tinyint(1) NOT NULL DEFAULT '0' COMMENT '是否启动（0:启用, 1:禁用）',
+  `startTime` bigint(11) NOT NULL COMMENT '有效期开始时间(单位秒)',
+  `endTime` bigint(11) NOT NULL COMMENT '有效期结束时间(单位秒)',
+  `createTime` bigint(11) NOT NULL COMMENT '创建时间(单位秒)',
+  `updateTime` bigint(11) NOT NULL COMMENT '更新时间(单位秒)',
+  `description` text NULL COMMENT '规则描述信息',
+  PRIMARY KEY (`sid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='设备联动规则表'
 
 

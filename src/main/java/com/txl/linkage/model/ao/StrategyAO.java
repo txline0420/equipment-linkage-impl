@@ -1,5 +1,6 @@
-package com.txl.linkage.model.vo;
+package com.txl.linkage.model.ao;
 
+import com.txl.linkage.core.ResultBean;
 import lombok.*;
 
 import java.io.Serializable;
@@ -13,18 +14,29 @@ import java.io.Serializable;
 @NoArgsConstructor
 @Builder
 @ToString
-public class LinkageManagementStrategySaveVO implements Serializable {
+public class StrategyAO implements Serializable {
     private static final long serialVersionUID = 4656838407253620538L;
     /** 标识 */
-    private Integer strategyId;
+    private Integer sId;
     /** 名称 */
-    private String strategyName;
+    private String name;
     /** 类型 0:设备类型、1:场景类型 */
-    private int strategyType;
+    private int type;
     /** 有效期开始时间(单位秒) */
-    private long strategyEffectiveStartTime;
+    private long start;
     /** 有效期结束时间(单位秒) */
-    private long strategyEffectiveEndTime;
+    private long end;
     /** 描述信息 */
-    private String strategyDescription;
+    private String description;
+
+
+    public ResultBean verification(){
+
+
+        return null;
+    }
+
+
+
+
 }

@@ -34,21 +34,11 @@ spring:
       max-open-prepared-statements: 20
 
 # mybatis配置信息
-mybatis-plus:
-  mapper-locations: classpath:mappers/**/*.xml
-  global-config:
-    db-config:
-      table-prefix: gp_
-      id-type: auto
-    banner: false
+mybatis:
+  type-aliases-package: com.txl.linkage.model.bo
+  type-handlers-package: com.txl.linkage.mapper
   configuration:
     map-underscore-to-camel-case: true
-    cache-enabled: false
-    call-setters-on-nulls: true
-
-#logging:
-#  level:
-#    root: warn
-#    com.txl.linkage.mapper: trace
-# pattern:
-#    console: '%p%m%n'
+    default-fetch-size: 100
+    default-statement-timeout: 3000
+  mapper-locations: classpath:com/txl/linkage/mapper/*.xml

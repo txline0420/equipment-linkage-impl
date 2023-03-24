@@ -13,12 +13,14 @@
     <!-- 日志最大的历史 30天 -->
     <property name="maxHistory" value="30" />
 
+    <!-- 自定义控制台输出日志级别颜色 -->
+    <conversionRule conversionWord="mycolor" converterClass="com.txl.linkage.config.LogColorConfig" />
     <!-- ConsoleAppender 控制台输出日志 -->
     <appender name="console" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
             <pattern>
                 <!-- 设置日志输出格式 -->
-                %green(%-5level) [%-15thread] %logger - %msg%n
+                %mycolor(%-5level) [%-15thread] %logger - %msg%n
             </pattern>
         </encoder>
     </appender>

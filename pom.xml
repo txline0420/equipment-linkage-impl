@@ -21,7 +21,10 @@
     <logback.version>1.2.3</logback.version>
     <commons.lang3.version>3.12.0</commons.lang3.version>
     <commons.io.version>2.11.0</commons.io.version>
+    <httpcore.version>4.4.16</httpcore.version>
+    <httpclient.version>4.5.14</httpclient.version>
     <fastjson.version>1.2.83</fastjson.version>
+    <hutool-all.version>5.8.15</hutool-all.version>
 
     <mybatis.version>2.3.0</mybatis.version>
     <mysql.version>8.0.32</mysql.version>
@@ -72,6 +75,16 @@
       <version>${commons.io.version}</version>
     </dependency>
     <dependency>
+      <groupId>org.apache.httpcomponents</groupId>
+      <artifactId>httpcore</artifactId>
+      <version>${httpcore.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.httpcomponents</groupId>
+      <artifactId>httpclient</artifactId>
+      <version>${httpclient.version}</version>
+    </dependency>
+    <dependency>
       <groupId>org.projectlombok</groupId>
       <artifactId>lombok</artifactId>
       <optional>true</optional>
@@ -81,6 +94,12 @@
       <artifactId>fastjson</artifactId>
       <version>${fastjson.version}</version>
     </dependency>
+    <dependency>
+      <groupId>cn.hutool</groupId>
+      <artifactId>hutool-all</artifactId>
+      <version>${hutool-all.version}</version>
+    </dependency>
+
 
     <!-- 日志组件 -->
     <dependency>

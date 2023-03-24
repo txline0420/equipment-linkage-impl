@@ -7,9 +7,6 @@ import java.io.Serializable;
 
 public class ResultBean<T> implements Serializable{
 
-    /**
-	 * 
-	 */
 	private static final long serialVersionUID = -204438634738394135L;
 	private int code;
     private String message;
