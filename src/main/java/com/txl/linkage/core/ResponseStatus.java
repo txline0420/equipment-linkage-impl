@@ -16,7 +16,9 @@ public enum ResponseStatus {
     Insert_Success("Insert_Success","新增成功"),
     Insert_Failed("Insert_Failed","新增失败"),
     Update_Success("Update_Success","更新成功"),
-    Update_Failed("Update_Failed","更新失败");
+    Update_Failed("Update_Failed","更新失败"),
+    Remove_Success("Remove_Success","删除成功"),
+    Remove_Failed("Remove_Failed","删除失败");
 
     private String code;
     private String name;

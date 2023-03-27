@@ -9,6 +9,7 @@ import com.txl.linkage.model.bo.SaveReturnBo;
 import com.txl.linkage.service.EquipmentLinkageRepositoryService;
 import lombok.AllArgsConstructor;
 import org.apache.commons.lang3.ObjectUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -91,6 +92,48 @@ public class EquipmentLinkageController {
 
         }
         logger.info("------------------- EquipmentLinkageController.insertOrUpdate --------- ");
+        logger.info("\n");
+        return resultBean;
+    }
+
+    /**
+     * 删除设备联动规则
+     *
+     * @param sid 主键id
+     * @return
+     */
+    @PostMapping(value = "/remove")
+    public ResultBean<Object> remove(@RequestParam(value = "sid") String sid) {
+        ResultBean<Object> resultBean = ResultBean.success(HttpStatus.SC_OK, null, null);
+        logger.info("\n");
+        logger.info("------------------- EquipmentLinkageController.remove ---------");
+        if (StringUtils.isEmpty(sid)) {
+            logger.info("[设备联动]-[删除]- [删除失败]: {null}");
+            resultBean.setData(
+                    SaveReturnBo.builder()
+                            .success(false)
+                            .msg(ResponseStatus.Is_Not_Null.getName())
+                            .build()
+            );
+            return resultBean;
+        }
+
+        // remove
+        logger.info("[设备联动]-[删除]，设备id：{}", sid);
+        try {
+            boolean isRemove = this.repositoryService.removeById(sid);
+            if (!isRemove) {
+                logger.error("[设备联动]-[删除]-[删除失败]，{}");
+                resultBean.setData(
+                        SaveReturnBo.builder()
+                                .success(false)
+                                .msg(ResponseStatus.Remove_Failed.getName())
+                );
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+        logger.info("------------------- EquipmentLinkageController.remove --------- ");
         logger.info("\n");
         return resultBean;
     }
