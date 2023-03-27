@@ -75,6 +75,7 @@ public class EquipmentLinkageController {
             // update
             logger.info("[设备联动]-[修改]，{}", JSONObject.toJSONString(vo));
             try {
+                //查询设备是否关闭
                 bo = this.repositoryService.update(vo);
                 resultBean.setData(bo);
             } catch (SQLSyntaxErrorException e) {
