@@ -23,7 +23,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * 设备联动页面服务
  */
 @RestController
-@RequestMapping(value="/iot/equipmentLinkage/linkageManagement")
+@RequestMapping(value = "/iot/equipmentLinkage/linkageManagement")
 @AllArgsConstructor
 public class EquipmentLinkageController {
     private static final Logger logger = LoggerFactory.getLogger(EquipmentLinkageController.class);
@@ -40,22 +40,22 @@ public class EquipmentLinkageController {
     @PostMapping(value = "/save")
     //@ApiOperation(value = "新增或修改设备联动规则")
     public ResultBean<Object> save(@RequestBody StrategyAO vo) {
-        ResultBean<Object> resultBean = ResultBean.success(HttpStatus.SC_OK,null,null);
+        ResultBean<Object> resultBean = ResultBean.success(HttpStatus.SC_OK, null, null);
         logger.info("\n");
         logger.info("------------------- EquipmentLinkageController.insertOrUpdate ---------");
-        if(ObjectUtils.isEmpty(vo)){
-            logger.info("[设备联动]-[新增]- [新增失败]: {null}");
+        if (ObjectUtils.isEmpty(vo)) {
+            logger.info("[设备联动]-[新增或者修改]- [新增或者修改失败]: {null}");
             resultBean.setData(
                     SaveReturnBo.builder()
-                    .success(false)
-                    .msg(ResponseStatus.Insert_Failed.getName())
-                    .build()
+                            .success(false)
+                            .msg(ResponseStatus.Is_Not_Null.getName())
+                            .build()
             );
             return resultBean;
         }
 
         SaveReturnBo bo;
-        if(ObjectUtils.isEmpty(vo.getSId())){
+        if (ObjectUtils.isEmpty(vo.getSId())) {
             // insert
             logger.info("[设备联动]-[新增]，{}", JSONObject.toJSONString(vo));
             try {
@@ -71,8 +71,22 @@ public class EquipmentLinkageController {
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
-        }else{
+        } else {
             // update
+            logger.info("[设备联动]-[修改]，{}", JSONObject.toJSONString(vo));
+            try {
+                bo = this.repositoryService.update(vo);
+                resultBean.setData(bo);
+            } catch (SQLSyntaxErrorException e) {
+                logger.error("[设备联动]-[修改]-[修改失败]，{}", e.getCause().getMessage());
+                resultBean.setData(
+                        SaveReturnBo.builder()
+                                .success(false)
+                                .msg(ResponseStatus.Update_Failed.getName())
+                );
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
 
         }
         logger.info("------------------- EquipmentLinkageController.insertOrUpdate --------- ");
@@ -84,7 +98,7 @@ public class EquipmentLinkageController {
     @GetMapping(value = "/validateName")
     //@ApiOperation(value = "设备联动规则名称校验")
     public ResultBean<Object> validateName(@RequestParam(value = "name") String name) {
-        ResultBean<Object> resultBean = ResultBean.success(HttpStatus.SC_OK,null,null);
+        ResultBean<Object> resultBean = ResultBean.success(HttpStatus.SC_OK, null, null);
         logger.info("\n");
         logger.info("------------------- EquipmentLinkageController.validateName ---------");
         logger.info("[设备联动]-[新增或修改]-[校验内容]: {}", name);
@@ -93,7 +107,7 @@ public class EquipmentLinkageController {
             Return bo = this.repositoryService.validateName(name);
             resultBean.setData(bo);
             logger.info("[设备联动]-[新增或修改]-[校验完毕]: {}", "该规则名可以使用");
-        } catch (SQLSyntaxErrorException e){
+        } catch (SQLSyntaxErrorException e) {
             logger.error("[设备联动]-[新增或修改]-[重复性校验失败]: {}", name);
 
         } catch (Exception e) {
@@ -103,7 +117,6 @@ public class EquipmentLinkageController {
         logger.info("\n");
         return resultBean;
     }
-
 
 
 }

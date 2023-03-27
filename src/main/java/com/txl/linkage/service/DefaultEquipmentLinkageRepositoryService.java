@@ -2,6 +2,7 @@ package com.txl.linkage.service;
 
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.txl.linkage.core.ResponseStatus;
@@ -76,9 +77,41 @@ public class DefaultEquipmentLinkageRepositoryService
 
 
 
+    @Transactional(rollbackFor = Exception.class)
     @Override
-    public SaveReturnBo update(StrategyAO vo) {
-        return null;
+    public SaveReturnBo update(StrategyAO vo)  throws Exception {
+        //1. 创建返回值对象
+        SaveReturnBo.SaveReturnBoBuilder saveReturnBoBuilder = SaveReturnBo.builder();
+        //2. 参数校验
+        Map<String, String> validate = this.validate(vo);
+        if(!validate.isEmpty()){
+            saveReturnBoBuilder.validateMap(validate);
+            logger.info("[设备联动]-[参数校验]-[校验不通过]，{}", JSONObject.toJSONString(validate));
+            return saveReturnBoBuilder.build();
+        }
+        //3. 转换为持久化对象
+        IotLinkageStrategy entity = IotLinkageStrategy.builder()
+                .name(vo.getName())
+                .type(vo.getType())
+                .startTime(vo.getStart())
+                .endTime(vo.getEnd())
+                .updateTime(System.currentTimeMillis()/1000)
+                .description(vo.getDescription())
+                .build();
+        // 4. 修改数据
+        boolean isUpdate = false;
+        try {
+            // 3. 查询数据是否存在重复的规则名称
+            LambdaUpdateWrapper<IotLinkageStrategy> updateWrapper = Wrappers.<IotLinkageStrategy>lambdaUpdate()
+                    .eq(IotLinkageStrategy::getSid,vo.getSId());
+            isUpdate = this.update(entity,updateWrapper);
+        } catch (RuntimeException e){
+            throw new RuntimeException(e);
+        }catch (Exception e) {
+            throw new SQLSyntaxErrorException(e);
+        }
+        saveReturnBoBuilder.success(isUpdate).msg(ResponseStatus.Update_Success.getName());
+        return saveReturnBoBuilder.build();
     }
 
     /**
