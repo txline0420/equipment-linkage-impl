@@ -91,6 +91,7 @@ public class DefaultEquipmentLinkageRepositoryService
         }
         //3. 转换为持久化对象
         IotLinkageStrategy entity = IotLinkageStrategy.builder()
+                .sid(vo.getSId())
                 .name(vo.getName())
                 .type(vo.getType())
                 .startTime(vo.getStart())
@@ -101,10 +102,7 @@ public class DefaultEquipmentLinkageRepositoryService
         // 4. 修改数据
         boolean isUpdate = false;
         try {
-            // 3. 查询数据是否存在重复的规则名称
-            LambdaUpdateWrapper<IotLinkageStrategy> updateWrapper = Wrappers.<IotLinkageStrategy>lambdaUpdate()
-                    .eq(IotLinkageStrategy::getSid,vo.getSId());
-            isUpdate = this.update(entity,updateWrapper);
+            isUpdate = this.updateById(entity);
         } catch (RuntimeException e){
             throw new RuntimeException(e);
         }catch (Exception e) {
