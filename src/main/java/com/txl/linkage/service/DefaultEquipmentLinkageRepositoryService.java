@@ -168,7 +168,10 @@ public class DefaultEquipmentLinkageRepositoryService
         QueryReturnBo.QueryReturnBoBuilder queryReturnBoBuilder = QueryReturnBo.builder();
         //2.name参数校验
         String name = ao.getName();
-        Map<String, String> validate = queryFunctionValidateName(name);
+        Map<String, String> validate = new HashMap<>();
+        if(StringUtils.isNotEmpty(name)){
+            validate = queryFunctionValidateName(name);
+        }
         if (!validate.isEmpty()) {
             queryReturnBoBuilder.validateMap(validate);
             logger.info("[设备联动]-[参数校验]-[校验不通过]，{}", JSONObject.toJSONString(validate));
