@@ -2,12 +2,14 @@ package com.txl.linkage.service;
 
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.txl.linkage.core.ResponseStatus;
 import com.txl.linkage.mapper.IotLinkageStrategyMapper;
+import com.txl.linkage.model.ao.EquipmentLinkageQueryAO;
 import com.txl.linkage.model.ao.StrategyAO;
+import com.txl.linkage.model.bo.QueryReturnBo;
 import com.txl.linkage.model.bo.Return;
 import com.txl.linkage.model.bo.SaveReturnBo;
 import com.txl.linkage.model.bo.SimpleReturnBo;
@@ -153,6 +155,36 @@ public class DefaultEquipmentLinkageRepositoryService
         }
         saveReturnBoBuilder.success(true).msg(ResponseStatus.Remove_Success.getName());
         return saveReturnBoBuilder.build();
+    }
+
+    @Override
+    public QueryReturnBo query(EquipmentLinkageQueryAO ao) throws Exception {
+        //1. 创建返回值对象
+        QueryReturnBo.QueryReturnBoBuilder queryReturnBoBuilder = QueryReturnBo.builder();
+        Integer pageNum = ao.getPageNum();
+        Integer pageSize = ao.getPageSize();
+        Page<IotLinkageStrategy> page = null;
+        try {
+            //2.查询数据
+            page = new Page<>(pageNum, pageSize);
+            strategyMapper.selectPage(page, null);
+        } catch (RuntimeException e) {
+            throw new RuntimeException(e);
+        } catch (Exception e) {
+            throw new SQLSyntaxErrorException(e);
+        }
+        List<IotLinkageStrategy> records = page.getRecords();
+        long total = page.getTotal();
+        long ppageSize = page.getSize();
+        long ppageNum = page.getCurrent();
+        queryReturnBoBuilder
+                .success(true)
+                .msg(ResponseStatus.Query_Success.getName())
+                .data(records)
+                .pageSize(ppageSize)
+                .pageNum(ppageNum)
+                .recordsTotal(total);
+        return queryReturnBoBuilder.build();
     }
 
     /**

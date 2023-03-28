@@ -1,8 +1,10 @@
 package com.txl.linkage.controller;
 
 import com.alibaba.fastjson.JSONObject;
+import com.txl.linkage.core.PageModel;
 import com.txl.linkage.core.ResponseStatus;
 import com.txl.linkage.core.ResultBean;
+import com.txl.linkage.model.ao.EquipmentLinkageQueryAO;
 import com.txl.linkage.model.ao.StrategyAO;
 import com.txl.linkage.model.bo.Return;
 import com.txl.linkage.model.bo.SaveReturnBo;
@@ -134,6 +136,21 @@ public class EquipmentLinkageController {
             throw new RuntimeException(e);
         }
         logger.info("------------------- EquipmentLinkageController.remove --------- ");
+        logger.info("\n");
+        return resultBean;
+    }
+
+    @PostMapping(value = "/query")
+    public ResultBean<Object> query(@RequestBody EquipmentLinkageQueryAO vo) {
+        ResultBean<Object> resultBean = ResultBean.success(HttpStatus.SC_OK, null, null);
+        logger.info("\n");
+        logger.info("------------------- EquipmentLinkageController.query ---------");
+        try {
+            SaveReturnBo query = this.repositoryService.query(vo);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+        logger.info("------------------- EquipmentLinkageController.query --------- ");
         logger.info("\n");
         return resultBean;
     }

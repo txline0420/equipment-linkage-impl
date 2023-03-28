@@ -1,7 +1,9 @@
 package com.txl.linkage.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.txl.linkage.model.ao.EquipmentLinkageQueryAO;
 import com.txl.linkage.model.ao.StrategyAO;
+import com.txl.linkage.model.bo.QueryReturnBo;
 import com.txl.linkage.model.bo.Return;
 import com.txl.linkage.model.bo.SaveReturnBo;
 import com.txl.linkage.model.entity.IotLinkageStrategy;
@@ -39,6 +41,14 @@ public interface EquipmentLinkageRepositoryService extends IService<IotLinkageSt
      * @throws Exception 业务异常
      */
     SaveReturnBo remove(Integer sid) throws Exception;
+
+    /**
+     *
+     * @param vo 查询数据条件
+     * @return 业务逻辑对象
+     * @throws Exception 业务异常
+     */
+    QueryReturnBo query(EquipmentLinkageQueryAO vo) throws Exception;
 
     /**
      * 规则名称校验 - 不允许重复的名称

@@ -18,7 +18,9 @@ public enum ResponseStatus {
     Update_Success("Update_Success","更新成功"),
     Update_Failed("Update_Failed","更新失败"),
     Remove_Success("Remove_Success","删除成功"),
-    Remove_Failed("Remove_Failed","删除失败");
+    Remove_Failed("Remove_Failed","删除失败"),
+    Query_Success("Query_Success","查询成功"),
+    Query_Failed("Query_Failed","查询失败");
 
     private String code;
     private String name;
