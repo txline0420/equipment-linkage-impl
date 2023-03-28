@@ -6,9 +6,9 @@ spring:
   # mysql bruid配置信息
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://192.168.8.149:3306/equipment_linkage?useSSL=false&serverTimezone=GMT%2B8&useUnicode=true&characterEncoding=utf-8&autoReconnect=true&failOverReadOnly=false
+    url: jdbc:mysql://192.168.1.166:3306/equipment_linkage?useSSL=false&serverTimezone=GMT%2B8&useUnicode=true&characterEncoding=utf-8&autoReconnect=true&failOverReadOnly=false
     username: root
-    password: user*2023
+    password: admin
     type: com.alibaba.druid.pool.DruidDataSource
     druid:
       initial-size: 1

@@ -9,7 +9,7 @@
     <jmxConfigurator />
     <!-- 定义日志文件 输出位置 -->
     <!-- <property name="log_dir" value="/var/log/demo-project/quartz-springboot-api" /> -->
-    <property name="log_dir" value="C:\\Users\\Administrator\\log\\equipment-linkage-impl" />
+    <property name="log_dir" value="C:\\Users\\Administrator\log\\equipment-linkage-impl" />
     <!-- 日志最大的历史 30天 -->
     <property name="maxHistory" value="30" />
 
