@@ -6,6 +6,7 @@ import com.txl.linkage.core.ResponseStatus;
 import com.txl.linkage.core.ResultBean;
 import com.txl.linkage.model.ao.EquipmentLinkageQueryAO;
 import com.txl.linkage.model.ao.StrategyAO;
+import com.txl.linkage.model.bo.QueryReturnBo;
 import com.txl.linkage.model.bo.Return;
 import com.txl.linkage.model.bo.SaveReturnBo;
 import com.txl.linkage.service.EquipmentLinkageRepositoryService;
@@ -126,7 +127,7 @@ public class EquipmentLinkageController {
             SaveReturnBo bo = this.repositoryService.remove(sid);
             resultBean.setData(bo);
         } catch (SQLSyntaxErrorException e) {
-            logger.error("[设备联动]-[删除]-[删除失败]，{}");
+            logger.error("[设备联动]-[删除]-[删除失败]");
             resultBean.setData(
                     SaveReturnBo.builder()
                             .success(false)
@@ -146,7 +147,15 @@ public class EquipmentLinkageController {
         logger.info("\n");
         logger.info("------------------- EquipmentLinkageController.query ---------");
         try {
-            SaveReturnBo query = this.repositoryService.query(vo);
+            QueryReturnBo queryData = this.repositoryService.query(vo);
+            resultBean.setData(queryData);
+        } catch (SQLSyntaxErrorException e) {
+            logger.error("[设备查询]-[查询]-[查询失败]");
+            resultBean.setData(
+                    SaveReturnBo.builder()
+                            .success(false)
+                            .msg(ResponseStatus.Remove_Failed.getName())
+            );
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
