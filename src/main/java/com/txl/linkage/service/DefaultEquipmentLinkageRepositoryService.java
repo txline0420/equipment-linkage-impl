@@ -19,9 +19,12 @@ import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.sql.SQLException;
+import java.sql.SQLIntegrityConstraintViolationException;
 import java.sql.SQLSyntaxErrorException;
 import java.util.HashMap;
 import java.util.List;
@@ -69,8 +72,8 @@ public class DefaultEquipmentLinkageRepositoryService
         boolean isSave = false;
         try {
             isSave = this.save(entity);
-        } catch (RuntimeException e) {
-
+        } catch (DuplicateKeyException e) {
+            throw e;
         } catch (Exception e) {
             throw new SQLSyntaxErrorException(e);
         }
@@ -114,8 +117,8 @@ public class DefaultEquipmentLinkageRepositoryService
         boolean isUpdate = false;
         try {
             isUpdate = this.updateById(entity);
-        } catch (RuntimeException e) {
-            throw new RuntimeException(e);
+        } catch (DuplicateKeyException e) {
+            throw e;
         } catch (Exception e) {
             throw new SQLSyntaxErrorException(e);
         }
@@ -139,7 +142,8 @@ public class DefaultEquipmentLinkageRepositoryService
             return saveReturnBoBuilder.build();
         }
         //3.设备状态检验
-        Map<String, String> deviceIsTurn = deviceIsTurn(sid);
+        IotLinkageStrategy oldDeviceInfo = null;
+        Map<String, String> deviceIsTurn = deviceIsTurn(sid,oldDeviceInfo);
         if (!deviceIsTurn.isEmpty()) {
             saveReturnBoBuilder.validateMap(deviceIsTurn);
             logger.info("[设备联动]-[设备关闭状态校验]-[校验不通过]，[false]");
@@ -153,6 +157,7 @@ public class DefaultEquipmentLinkageRepositoryService
         } catch (Exception e) {
             throw new SQLSyntaxErrorException(e);
         }
+        logger.info("[设备联动]-[删除成功]-[删除的设备信息]，{}，[删除时间]，{}", JSONObject.toJSONString(oldDeviceInfo),System.currentTimeMillis() / 1000);
         saveReturnBoBuilder.success(true).msg(ResponseStatus.Remove_Success.getName());
         return saveReturnBoBuilder.build();
     }
@@ -274,12 +279,34 @@ public class DefaultEquipmentLinkageRepositoryService
         LambdaQueryWrapper<IotLinkageStrategy> queryWrapper = Wrappers.<IotLinkageStrategy>lambdaQuery();
         queryWrapper.select(IotLinkageStrategy::getActive).eq(IotLinkageStrategy::getSid, sid);
         IotLinkageStrategy deviceInfo = this.strategyMapper.selectOne(queryWrapper);
-        if (ObjectUtils.isNotEmpty(deviceInfo) && deviceInfo.getActive() == 1) {
+        if (ObjectUtils.isEmpty(deviceInfo) ) {
+            map.put("active", "设备不存在！");
+            return map;
+        }
+        if(deviceInfo.getActive() == 1){
             return map;
         }
         map.put("active", "设备还处于开启状态！");
         return map;
     }
 
+    /**
+     * 查询设备是否是开启状态，并获取设备原本信息
+     */
+    private Map<String, String> deviceIsTurn(Integer sid,IotLinkageStrategy deviceInfo) {
+        Map<String, String> map = new HashMap<>();
+        LambdaQueryWrapper<IotLinkageStrategy> queryWrapper = Wrappers.<IotLinkageStrategy>lambdaQuery();
+        queryWrapper.select(IotLinkageStrategy::getActive).eq(IotLinkageStrategy::getSid, sid);
+        deviceInfo = this.strategyMapper.selectOne(queryWrapper);
+        if (ObjectUtils.isEmpty(deviceInfo) ) {
+            map.put("active", "设备不存在！");
+            return map;
+        }
+        if(deviceInfo.getActive() == 1){
+            return map;
+        }
+        map.put("active", "设备还处于开启状态！");
+        return map;
+    }
 
 }

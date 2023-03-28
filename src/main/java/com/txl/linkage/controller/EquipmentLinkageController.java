@@ -16,9 +16,13 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
 import java.sql.SQLSyntaxErrorException;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -65,15 +69,33 @@ public class EquipmentLinkageController {
             try {
                 bo = this.repositoryService.insert(vo);
                 resultBean.setData(bo);
+            } catch (DuplicateKeyException e) {
+                logger.error("[设备联动]-[新增]-[新增失败]-[name字段重复]，{}", e.getCause().getMessage());
+                HashMap<String, String> map = new HashMap<>();
+                map.put("name", "设备名重复");
+                resultBean.setData(
+                        SaveReturnBo.builder()
+                                .success(false)
+                                .msg(ResponseStatus.Insert_Failed.getName())
+                                .validateMap(map)
+                                .build()
+                );
             } catch (SQLSyntaxErrorException e) {
                 logger.error("[设备联动]-[新增]-[新增失败]，{}", e.getCause().getMessage());
                 resultBean.setData(
                         SaveReturnBo.builder()
                                 .success(false)
                                 .msg(ResponseStatus.Insert_Failed.getName())
+                                .build()
                 );
             } catch (Exception e) {
-                throw new RuntimeException(e);
+                logger.error("[设备联动]-[新增]-[新增失败]，{}", e.getCause().getMessage());
+                resultBean.setData(
+                        SaveReturnBo.builder()
+                                .success(false)
+                                .msg(ResponseStatus.Insert_Failed.getName())
+                                .build()
+                );
             }
         } else {
             // update
@@ -82,15 +104,33 @@ public class EquipmentLinkageController {
                 //查询设备是否关闭
                 bo = this.repositoryService.update(vo);
                 resultBean.setData(bo);
+            } catch (DuplicateKeyException e) {
+                logger.error("[设备联动]-[修改]-[修改失败]-[name字段重复]，{}", e.getCause().getMessage());
+                HashMap<String, String> map = new HashMap<>();
+                map.put("name", "设备名重复");
+                resultBean.setData(
+                        SaveReturnBo.builder()
+                                .success(false)
+                                .msg(ResponseStatus.Insert_Failed.getName())
+                                .validateMap(map)
+                                .build()
+                );
             } catch (SQLSyntaxErrorException e) {
-                logger.error("[设备联动]-[修改]-[修改失败]，{}", e.getCause().getMessage());
+                logger.error("[设备联动]-[修改]-[修改失败sql异常]，{}", e.getCause().getMessage());
                 resultBean.setData(
                         SaveReturnBo.builder()
                                 .success(false)
                                 .msg(ResponseStatus.Update_Failed.getName())
+                                .build()
                 );
             } catch (Exception e) {
-                throw new RuntimeException(e);
+                logger.error("[设备联动]-[修改]-[修改失败运行异常]，{}", e.getCause().getMessage());
+                resultBean.setData(
+                        SaveReturnBo.builder()
+                                .success(false)
+                                .msg(ResponseStatus.Update_Failed.getName())
+                                .build()
+                );
             }
 
         }
@@ -110,16 +150,6 @@ public class EquipmentLinkageController {
         ResultBean<Object> resultBean = ResultBean.success(HttpStatus.SC_OK, null, null);
         logger.info("\n");
         logger.info("------------------- EquipmentLinkageController.remove ---------");
-        if (ObjectUtils.isEmpty(sid)) {
-            logger.info("[设备联动]-[删除]- [删除失败]: {null}");
-            resultBean.setData(
-                    SaveReturnBo.builder()
-                            .success(false)
-                            .msg(ResponseStatus.Is_Not_Null.getName())
-                            .build()
-            );
-            return resultBean;
-        }
 
         // remove
         logger.info("[设备联动]-[删除]，设备id：{}", sid);
@@ -127,14 +157,21 @@ public class EquipmentLinkageController {
             SaveReturnBo bo = this.repositoryService.remove(sid);
             resultBean.setData(bo);
         } catch (SQLSyntaxErrorException e) {
-            logger.error("[设备联动]-[删除]-[删除失败]");
+            logger.error("[设备联动]-[删除]-[删除失败sql异常]-{}", e.getCause().getMessage());
             resultBean.setData(
                     SaveReturnBo.builder()
                             .success(false)
                             .msg(ResponseStatus.Remove_Failed.getName())
+                            .build()
             );
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            logger.error("[设备联动]-[删除]-[删除失败运行异常]-{}", e.getCause().getMessage());
+            resultBean.setData(
+                    SaveReturnBo.builder()
+                            .success(false)
+                            .msg(ResponseStatus.Remove_Failed.getName())
+                            .build()
+            );
         }
         logger.info("------------------- EquipmentLinkageController.remove --------- ");
         logger.info("\n");
@@ -150,14 +187,21 @@ public class EquipmentLinkageController {
             QueryReturnBo queryData = this.repositoryService.query(vo);
             resultBean.setData(queryData);
         } catch (SQLSyntaxErrorException e) {
-            logger.error("[设备查询]-[查询]-[查询失败]");
+            logger.error("[设备查询]-[查询]-[查询失败sql异常]-{}", e.getCause().getMessage());
             resultBean.setData(
                     SaveReturnBo.builder()
                             .success(false)
                             .msg(ResponseStatus.Remove_Failed.getName())
+                            .build()
             );
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            logger.error("[设备查询]-[查询]-[查询失败运行异常]-{}", e.getCause().getMessage());
+            resultBean.setData(
+                    SaveReturnBo.builder()
+                            .success(false)
+                            .msg(ResponseStatus.Remove_Failed.getName())
+                            .build()
+            );
         }
         logger.info("------------------- EquipmentLinkageController.query --------- ");
         logger.info("\n");
