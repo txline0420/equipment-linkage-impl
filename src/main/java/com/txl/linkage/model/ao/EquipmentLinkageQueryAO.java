@@ -14,6 +14,8 @@ import java.io.Serializable;
 @Builder
 @ToString
 public class EquipmentLinkageQueryAO implements Serializable {
+    //设备名称
+    private  String name;
     //当前第几页
     private Integer pageNum;
     //每页行数

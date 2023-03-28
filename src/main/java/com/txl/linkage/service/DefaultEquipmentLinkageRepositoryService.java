@@ -166,13 +166,27 @@ public class DefaultEquipmentLinkageRepositoryService
     public QueryReturnBo query(EquipmentLinkageQueryAO ao) throws Exception {
         //1. 创建返回值对象
         QueryReturnBo.QueryReturnBoBuilder queryReturnBoBuilder = QueryReturnBo.builder();
+        //2.name参数校验
+        String name = ao.getName();
+        Map<String, String> validate = new HashMap<>();
+        if(StringUtils.isNotEmpty(name)){
+            validate = queryFunctionValidateName(name);
+        }
+        if (!validate.isEmpty()) {
+            queryReturnBoBuilder.validateMap(validate);
+            logger.info("[设备联动]-[参数校验]-[校验不通过]，{}", JSONObject.toJSONString(validate));
+            return queryReturnBoBuilder.build();
+        }
         Integer pageNum = ao.getPageNum();
         Integer pageSize = ao.getPageSize();
         Page<IotLinkageStrategy> page = null;
         try {
-            //2.查询数据
+            //name不为空，才按name去查
+            LambdaQueryWrapper<IotLinkageStrategy> queryWrapper = Wrappers.<IotLinkageStrategy>lambdaQuery()
+                    .eq(StringUtils.isNotEmpty(name),IotLinkageStrategy::getName, name);
+            //3.查询数据
             page = new Page<>(pageNum, pageSize);
-            strategyMapper.selectPage(page, null);
+            strategyMapper.selectPage(page, queryWrapper);
         } catch (RuntimeException e) {
             throw new RuntimeException(e);
         } catch (Exception e) {
@@ -235,6 +249,20 @@ public class DefaultEquipmentLinkageRepositoryService
                 .success(true)
                 .msg(ResponseStatus.Valid_Success.getName())
                 .build();
+    }
+
+    /**
+     * 设备联动规则名称校验 - 查询功能校验
+     */
+    public Map<String, String> queryFunctionValidateName(String name) throws Exception {
+        Map<String, String> map = new ConcurrentHashMap<>();
+        // 1. 创建返回值对象
+        SimpleReturnBo.SimpleReturnBoBuilder simpleReturnBoBuilder = SimpleReturnBo.builder();
+        // 2. 名称数据格式校验
+        if (!name.matches("^[\\u4E00-\\u9FA5A-Za-z0-9_]+$")) {
+            map.put("name", "规则名称格式有误!");
+        }
+        return map;
     }
 
 
