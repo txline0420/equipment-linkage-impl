@@ -16,5 +16,8 @@ CREATE TABLE `iot_linkage_strategy` (
   PRIMARY KEY (`sid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='设备联动规则表'
 
+# 增加iot_linkage_strategy表的name字段的唯一索引
+ALTER TABLE iot_linkage_strategy ADD CONSTRAINT  unique_iot_linkage_strategy UNIQUE KEY(name);
+
 
 
