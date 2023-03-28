@@ -103,11 +103,11 @@ public class EquipmentLinkageController {
      * @return
      */
     @PostMapping(value = "/remove")
-    public ResultBean<Object> remove(@RequestParam(value = "sid") String sid) {
+    public ResultBean<Object> remove(@RequestParam(value = "sid") Integer sid) {
         ResultBean<Object> resultBean = ResultBean.success(HttpStatus.SC_OK, null, null);
         logger.info("\n");
         logger.info("------------------- EquipmentLinkageController.remove ---------");
-        if (StringUtils.isEmpty(sid)) {
+        if (ObjectUtils.isEmpty(sid)) {
             logger.info("[设备联动]-[删除]- [删除失败]: {null}");
             resultBean.setData(
                     SaveReturnBo.builder()
@@ -121,15 +121,15 @@ public class EquipmentLinkageController {
         // remove
         logger.info("[设备联动]-[删除]，设备id：{}", sid);
         try {
-            boolean isRemove = this.repositoryService.removeById(sid);
-            if (!isRemove) {
-                logger.error("[设备联动]-[删除]-[删除失败]，{}");
-                resultBean.setData(
-                        SaveReturnBo.builder()
-                                .success(false)
-                                .msg(ResponseStatus.Remove_Failed.getName())
-                );
-            }
+            SaveReturnBo bo = this.repositoryService.remove(sid);
+            resultBean.setData(bo);
+        } catch (SQLSyntaxErrorException e) {
+            logger.error("[设备联动]-[删除]-[删除失败]，{}");
+            resultBean.setData(
+                    SaveReturnBo.builder()
+                            .success(false)
+                            .msg(ResponseStatus.Remove_Failed.getName())
+            );
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

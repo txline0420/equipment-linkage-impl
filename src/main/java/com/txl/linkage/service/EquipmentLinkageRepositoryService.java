@@ -23,8 +23,22 @@ public interface EquipmentLinkageRepositoryService extends IService<IotLinkageSt
      */
     SaveReturnBo insert(StrategyAO vo) throws Exception;
 
-
+    /**
+     *
+     * @param vo 修改FORM表单数据
+     * @return 业务逻辑对象
+     * @throws SQLSyntaxErrorException  数据库异常
+     * @throws Exception 业务异常
+     */
     SaveReturnBo update(StrategyAO vo) throws Exception;
+
+    /**
+     *
+     * @param sid 设备id
+     * @return 业务逻辑对象
+     * @throws Exception 业务异常
+     */
+    SaveReturnBo remove(Integer sid) throws Exception;
 
     /**
      * 规则名称校验 - 不允许重复的名称

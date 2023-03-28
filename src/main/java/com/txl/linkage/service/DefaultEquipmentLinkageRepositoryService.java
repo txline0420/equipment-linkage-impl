@@ -92,7 +92,8 @@ public class DefaultEquipmentLinkageRepositoryService
         //3.设备关闭状态校验
         Integer sId = vo.getSId();
         Map<String, String> deviceIsTurn = deviceIsTurn(sId);
-        if(!deviceIsTurn.isEmpty()){
+        if (!deviceIsTurn.isEmpty()) {
+            saveReturnBoBuilder.validateMap(deviceIsTurn);
             logger.info("[设备联动]-[设备关闭状态校验]-[校验不通过]，[false]");
             return saveReturnBoBuilder.build();
         }
@@ -117,6 +118,40 @@ public class DefaultEquipmentLinkageRepositoryService
             throw new SQLSyntaxErrorException(e);
         }
         saveReturnBoBuilder.success(isUpdate).msg(ResponseStatus.Update_Success.getName());
+        return saveReturnBoBuilder.build();
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    @Override
+    public SaveReturnBo remove(Integer sid) throws Exception {
+        //1. 创建返回值对象
+        SaveReturnBo.SaveReturnBoBuilder saveReturnBoBuilder = SaveReturnBo.builder();
+        //2. sid 检验
+        Map<String, String> validate = new HashMap<>();
+        if (ObjectUtils.isNotEmpty(sid) && !String.valueOf(sid).matches("^[0-9]*$")) {
+            validate.put("sId", "参数不合法!");
+        }
+        if (!validate.isEmpty()) {
+            saveReturnBoBuilder.validateMap(validate);
+            logger.info("[设备联动]-[参数校验]-[校验不通过]，{}", JSONObject.toJSONString(validate));
+            return saveReturnBoBuilder.build();
+        }
+        //3.设备状态检验
+        Map<String, String> deviceIsTurn = deviceIsTurn(sid);
+        if (!deviceIsTurn.isEmpty()) {
+            saveReturnBoBuilder.validateMap(deviceIsTurn);
+            logger.info("[设备联动]-[设备关闭状态校验]-[校验不通过]，[false]");
+            return saveReturnBoBuilder.build();
+        }
+        try {
+            //4.删除数据
+            strategyMapper.deleteById(sid);
+        } catch (RuntimeException e) {
+            throw new RuntimeException(e);
+        } catch (Exception e) {
+            throw new SQLSyntaxErrorException(e);
+        }
+        saveReturnBoBuilder.success(true).msg(ResponseStatus.Remove_Success.getName());
         return saveReturnBoBuilder.build();
     }
 
@@ -202,7 +237,7 @@ public class DefaultEquipmentLinkageRepositoryService
      * @param sid 设备id
      * @return
      */
-    private  Map<String, String> deviceIsTurn(Integer sid) {
+    private Map<String, String> deviceIsTurn(Integer sid) {
         Map<String, String> map = new HashMap<>();
         LambdaQueryWrapper<IotLinkageStrategy> queryWrapper = Wrappers.<IotLinkageStrategy>lambdaQuery();
         queryWrapper.select(IotLinkageStrategy::getActive).eq(IotLinkageStrategy::getSid, sid);
