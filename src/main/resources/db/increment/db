@@ -19,5 +19,25 @@ CREATE TABLE `iot_linkage_strategy` (
 # 增加iot_linkage_strategy表的name字段的唯一索引
 ALTER TABLE iot_linkage_strategy ADD CONSTRAINT  unique_iot_linkage_strategy UNIQUE KEY(name);
 
+# 增加 设备触发器 定时触发器 场景触发器
+ALTER TABLE `iot_linkage_strategy` add
+	`triggerDevice` varchar(255) DEFAULT NULL COMMENT '设备触发器';
+
+ALTER TABLE `iot_linkage_strategy` add
+	`triggerCron` varchar(255) DEFAULT NULL COMMENT '定时触发器';
+
+ALTER TABLE `iot_linkage_strategy` add
+	`triggerScene` varchar(255) DEFAULT NULL COMMENT '场景触发器';
+
+# 2. 定时触发器
+CREATE TABLE `iot_linkage_cron_trigger` (
+  `tid` int NOT NULL AUTO_INCREMENT COMMENT '主键ID',
+  `cron` varchar(255) NOT NULL COMMENT '定时触发器表达式',
+  PRIMARY KEY (`tid`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='定时触发器规则表'
+
+# 增加iot_linkage_cron_trigger表的corn字段的唯一索引
+ALTER TABLE iot_linkage_cron_trigger ADD CONSTRAINT  unique_iot_linkage_cron_trigger UNIQUE KEY(cron);
 
 
+#triggerCron 字段可能要改为 text

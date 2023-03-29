@@ -40,4 +40,10 @@ public class IotLinkageStrategy {
     private Long updateTime;     // 更新时间(单位秒)
     @TableField(value = "description")
     private String description; // 规则描述
+    @TableField(value = "triggerScene")
+    private String triggerScene; //"场景触发器"
+    @TableField(value = "triggerCron")
+    private String triggerCron; //"定时触发器"
+    @TableField(value = "triggerDevice")
+    private String triggerDevice; //"设备触发器"
 }

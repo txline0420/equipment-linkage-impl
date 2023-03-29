@@ -9,10 +9,8 @@ import com.txl.linkage.core.ResponseStatus;
 import com.txl.linkage.mapper.IotLinkageStrategyMapper;
 import com.txl.linkage.model.ao.EquipmentLinkageQueryAO;
 import com.txl.linkage.model.ao.StrategyAO;
-import com.txl.linkage.model.bo.QueryReturnBo;
-import com.txl.linkage.model.bo.Return;
-import com.txl.linkage.model.bo.SaveReturnBo;
-import com.txl.linkage.model.bo.SimpleReturnBo;
+import com.txl.linkage.model.bo.*;
+import com.txl.linkage.model.entity.IotLinkageCronTrigger;
 import com.txl.linkage.model.entity.IotLinkageStrategy;
 import lombok.AllArgsConstructor;
 import org.apache.commons.lang3.ObjectUtils;
@@ -26,6 +24,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.sql.SQLException;
 import java.sql.SQLIntegrityConstraintViolationException;
 import java.sql.SQLSyntaxErrorException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -118,6 +117,7 @@ public class DefaultEquipmentLinkageRepositoryService
         try {
             isUpdate = this.updateById(entity);
         } catch (DuplicateKeyException e) {
+            //抛给controller处理name重复问题
             throw e;
         } catch (Exception e) {
             throw new SQLSyntaxErrorException(e);
