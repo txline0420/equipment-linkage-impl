@@ -74,7 +74,7 @@ public class DefaultEquipmentLinkageCronTirggerRepositoryService
             isSaveCronTrigger = this.save(entity);
             //todo 这个修改是否需要设备状态停止？ 没有并发需求不用加锁
             Integer sid = vo.getSid();
-            String cron = vo.getCron();
+            Integer tid = entity.getTid();
             LambdaQueryWrapper<IotLinkageStrategy> queryWrapper = Wrappers.<IotLinkageStrategy>lambdaQuery()
                     .eq(IotLinkageStrategy::getSid, sid).select(IotLinkageStrategy::getTriggerCron, IotLinkageStrategy::getSid);
             //4.2查询iot_linkage_strategy的老数据
@@ -82,7 +82,7 @@ public class DefaultEquipmentLinkageCronTirggerRepositoryService
             iotLinkageStrategy.setUpdateTime(System.currentTimeMillis() / 1000);
             if (ObjectUtils.isNotEmpty(iotLinkageStrategy)) {
                 String oldTriggerCron = iotLinkageStrategy.getTriggerCron();
-                String newTriggerCron = StringUtils.isBlank(oldTriggerCron) ? cron : oldTriggerCron + "," + cron;
+                String newTriggerCron = StringUtils.isBlank(oldTriggerCron) ? String.valueOf(tid) : oldTriggerCron + "," + tid;
                 iotLinkageStrategy.setTriggerCron(newTriggerCron);
                 //4.3为iot_linkage_strategy修改新TriggerCron
                 strategyMapper.updateById(iotLinkageStrategy);
